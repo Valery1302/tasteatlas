@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 
 import Table from '@mui/material/Table';
@@ -10,38 +11,40 @@ import Paper from '@mui/material/Paper';
 
 import { type Dish } from '../interface/Dish';
 
-export default function DishTable( { data } : { data: Dish[] } ) {
+export default function DishTable({ data }: { data: Dish[] }) {
+  const [rows, setRows] = useState<Dish[]>([])
 
-  let [rows, setRows] = useState(Array<Dish>)
+  const toText = (v: string[] | string | undefined) =>
+    Array.isArray(v) ? v.join(', ') : (v ?? '');
 
-  let getRows = () => {
+  const getRows = () => {
     if (rows.length) {
-      return (
-        rows.slice(0,10).map((row) => (
-          <TableRow
-            key={row.position}
-            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-          >
-            <TableCell component="th" scope="row">
-              {row.position}
-            </TableCell>
-            <TableCell align="right">{row.title} ({row.subtitle})</TableCell>
-            
-            {/* PENDIENTE: Valores a renderizar en cada celda  */}
-            
-          </TableRow>
-        ))
-      )
-    } else {
-      return <TableRow><TableCell>No data</TableCell></TableRow>
+      return rows.slice(0, 10).map((row) => (
+        <TableRow key={row.position} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+          <TableCell component="th" scope="row">{row.position}</TableCell>
+          <TableCell align="right">{row.title} ({row.subtitle})</TableCell>
+
+          <TableCell align="center">{row.country}</TableCell>
+          <TableCell align="center">{row.rating}</TableCell>
+
+          <TableCell align="left">{toText(row.iconic_restaurants)}</TableCell>
+          <TableCell align="left">{toText(row.ingredients)}</TableCell>
+        </TableRow>
+      ))
     }
-      
+
+    return (
+      <TableRow>
+        <TableCell colSpan={6} align="center">No data</TableCell>
+      </TableRow>
+    )
   }
 
-  useEffect( ()=> {
+  useEffect(() => {
     setRows(data)
   }, [data])
-  
+
+
 
   return (
     <TableContainer component={Paper}>
@@ -49,15 +52,15 @@ export default function DishTable( { data } : { data: Dish[] } ) {
         <TableHead>
           <TableRow>
             <TableCell>Puesto</TableCell>
-            <TableCell align='center'>Plato</TableCell>
-            
-            {/* PENDIENTE: Cabeceras de las columnas  */}
-
+            <TableCell align="center">Plato</TableCell>
+            <TableCell align="center">País</TableCell>
+            <TableCell align="center">Rating</TableCell>
+            <TableCell align="center">Restaurantes icónicos</TableCell>
+            <TableCell align="center">Ingredientes</TableCell>
           </TableRow>
         </TableHead>
-        <TableBody>
-          {getRows()}
-        </TableBody>
+
+        <TableBody>{getRows()}</TableBody>
       </Table>
     </TableContainer>
   );
